@@ -15,22 +15,17 @@ jest.mock('./../../../i18n/index', () => {
 	};
 });
 
-jest.mock('next/router', () => ({
-	useRouter() {
-		return {
-			route: '/',
-			pathname: '',
-			query: '',
-			asPath: '',
-		};
+jest.mock('next/navigation', () => ({
+	useSearchParams() {
+		return new URLSearchParams();
 	},
 }));
-const useRouter = jest.spyOn(require('next/router'), 'useRouter');
+const useSearchParams = jest.spyOn(require('next/navigation'), 'useSearchParams');
 
 jest.mock('./use-selected-language', () => {
 	return {
 		__esModule: true,
-		default: () => { },
+		default: () => {},
 	};
 });
 
@@ -58,9 +53,7 @@ describe('The hook returns ', () => {
 				lang: 'forced',
 			},
 		];
-		useRouter.mockImplementation(() => ({
-			query: { bar: 'baz', lang: 'foo' },
-		}));
+		useSearchParams.mockImplementation(() => new URLSearchParams('bar=baz&lang=foo'));
 		useSelectedLanguage.mockImplementation(() => ({
 			lang: 'bar',
 		}));
@@ -76,9 +69,7 @@ describe('The hook returns ', () => {
 				lang: 'bar',
 			},
 		];
-		useRouter.mockImplementation(() => ({
-			query: { bar: 'baz', lang: 'foo' },
-		}));
+		useSearchParams.mockImplementation(() => new URLSearchParams('bar=baz&lang=foo'));
 		useSelectedLanguage.mockImplementation(() => ({
 			lang: 'bar',
 		}));
@@ -94,9 +85,7 @@ describe('The hook returns ', () => {
 				lang: 'foo',
 			},
 		];
-		useRouter.mockImplementation(() => ({
-			query: { bar: 'baz', lang: 'foo' },
-		}));
+		useSearchParams.mockImplementation(() => new URLSearchParams('bar=baz&lang=foo'));
 		useSelectedLanguage.mockImplementation(() => ({
 			lang: '',
 		}));
@@ -107,9 +96,7 @@ describe('The hook returns ', () => {
 
 	it(`an empty object if there is no query`, async () => {
 		const expectation = [{}];
-		useRouter.mockImplementation(() => ({
-			query: null,
-		}));
+		useSearchParams.mockImplementation(() => new URLSearchParams());
 		useSelectedLanguage.mockImplementation(() => ({
 			lang: '',
 		}));

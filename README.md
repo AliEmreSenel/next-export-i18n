@@ -87,22 +87,17 @@ _In case there is a default language set in the browser and this language is ava
 it overrides the default language setting in the config file._ Relevant is the primary subtag, e.g.: a default language of `en-US` from the will be read as `en`.
 Set `useBrowserDefault` to false if you want to forcefully override the browser language.
 
-4. `import { useTranslation, useLanguageQuery, LanguageSwitcher } from 'next-export-i18n'` in your `pages` and get the required hooks.
+4. `import { useTranslation, useLanguageQuery } from 'next-export-i18n'` in your `pages` and get the required hooks.
 
 ```javascript
-import {
-  useTranslation,
-  useLanguageQuery,
-  LanguageSwitcher,
-} from "next-export-i18n";
+import { useTranslation, useLanguageQuery } from "next-export-i18n";
 
 const { t } = useTranslation();
 const [query] = useLanguageQuery();
 ```
 
-4. Add the `<LanguageSwitcher lang={string}>` component to change the language (or create your own language switcher).
-5. Add the `query` from `useLanguageQuery` to your internal links to enhance them with the language parameter (`<Link href={{ query: query … }}>…`).
-6. Add the translations with `t(key)` from `useTranslation` to your elements. They will be automatically update as soon as the language change.
+4. Add the `query` from `useLanguageQuery` to your internal links to enhance them with the language parameter (`<Link href={{ query: query … }}>…`).
+5. Add the translations with `t(key)` from `useTranslation` to your elements. They will be automatically update as soon as the language change.
 
 ### Module.js
 

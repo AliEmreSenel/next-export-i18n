@@ -20,5 +20,5 @@ export default {
         typescript({ objectHashIgnoreUnknownHack: true }),
         babel({ "presets": ["next/babel"] })
     ],
-    external: ['react', 'react-dom', 'next', 'next/router', './../../i18n/index', 'mustache']
+    external: ['react', 'react-dom', 'next', 'next/navigation', './../../i18n/index', 'mustache']
 }

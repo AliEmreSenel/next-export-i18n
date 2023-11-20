@@ -1,5 +1,5 @@
 
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import i18n from './../index';
 import { Dictionary, I18N } from '../types';
 import useSelectedLanguage from './use-selected-language';
@@ -12,14 +12,13 @@ import Mustache from 'mustache';
  * In case there is no entry for this key, it returns the key.
  * @returns t(key: string): any function
  */
-const useTranslation = ( ) => {
-	const router = useRouter();
+const useTranslation = () => {
 	let i18nObj: I18N;
 
 	i18nObj = i18n() as I18N;
 
 	const translations: Dictionary = i18nObj.translations;
-	const defaultLang: string = i18nObj.defaultLang;  ;
+	const defaultLang: string = i18nObj.defaultLang;;
 	const { lang } = useSelectedLanguage();
 	// const [lang] = useSelectedLanguage();
 
@@ -34,10 +33,10 @@ const useTranslation = ( ) => {
 		 */
 		t: (key: string, view?: object): any => {
 			let value: any = key.split('.').reduce(
-					(previous: any, current: string) =>
-						(previous && previous[current]) || null,
-					translations[lang]
-				);
+				(previous: any, current: string) =>
+					(previous && previous[current]) || null,
+				translations[lang]
+			);
 			let translation: any = value || key;
 			try {
 				return Mustache.render(translation, view);

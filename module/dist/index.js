@@ -1,13 +1,13 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var router = require('next/router');
-var React = require('react');
+var navigation = require('next/navigation');
+var react = require('react');
 var I18N = require('./../../i18n/index.js');
+var router = require('next/router');
 var Mustache = require('mustache');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
 var Mustache__default = /*#__PURE__*/_interopDefaultLegacy(Mustache);
 
 /**
@@ -69,15 +69,15 @@ function useSelectedLanguage() {
     i18nObj = i18n();
     const defaultLang = i18nObj.defaultLang;
     const translations = i18nObj.translations;
-    const router$1 = router.useRouter();
-    const [lang, setLang] = React.useState(defaultLang);
+    const searchParams = navigation.useSearchParams();
+    const [lang, setLang] = react.useState(defaultLang);
     // set the language if the query parameter changes
-    React.useEffect(() => {
-        if (router$1.query.lang && router$1.query.lang !== lang && translations && translations[router$1.query.lang]) {
-            let lang = router$1.query.lang;
+    react.useEffect(() => {
+        if (searchParams && searchParams.get("lang") && searchParams.get("lang") !== lang && translations && translations[searchParams.get("lang")]) {
+            let lang = searchParams.get("lang");
             setLang(lang);
         }
-    }, [lang, router$1.query.lang]);
+    }, [lang, searchParams]);
     return { lang, setLang };
     // return [lang, setLang] as const;
 }
@@ -93,19 +93,17 @@ let passedQuery;
  */
 function useLanguageQuery(forceLang) {
     const { lang } = useSelectedLanguage();
-    const router$1 = router.useRouter();
-    const [value, setValue] = React.useState();
+    const searchParams = navigation.useSearchParams();
+    const [value, setValue] = react.useState();
     // keep passed parameters
     passedQuery = {};
-    if (router$1.query) {
-        let query = router$1.query;
-        const keys = Object.keys(query);
-        keys.forEach((key, index) => {
-            passedQuery[key] = query[key];
+    if (searchParams) {
+        searchParams.forEach((value, key) => {
+            passedQuery[key] = value;
         });
     }
     // set lang if one of the dependencies is changing
-    React.useEffect(() => {
+    react.useEffect(() => {
         setValue({
             ...passedQuery,
             lang: forceLang || lang || passedQuery['lang'],
@@ -124,8 +122,8 @@ function useLanguageSwitcherIsActive(currentLang) {
     i18nObj = i18n();
     const defaultLang = i18nObj.defaultLang;
     const router$1 = router.useRouter();
-    const [isActive, setIsActive] = React.useState(false);
-    React.useEffect(() => {
+    const [isActive, setIsActive] = react.useState(false);
+    react.useEffect(() => {
         let current = false;
         if (!router$1.query || !router$1.query.lang) {
             current = defaultLang === currentLang;
@@ -147,7 +145,6 @@ function useLanguageSwitcherIsActive(currentLang) {
  * @returns t(key: string): any function
  */
 const useTranslation = () => {
-    router.useRouter();
     let i18nObj;
     i18nObj = i18n();
     const translations = i18nObj.translations;
@@ -176,60 +173,6 @@ const useTranslation = () => {
     };
 };
 
-/**
- * Simple component for switching the language.
- * Set the "lang" query parameter on click whie preserves the current query parameters
- * Style it using the
- * - [data-language-switcher]
- * - [data-is-current="true"]
- *  attribute selectors or create your own component.
- * @param lang string the language to switch to. Needs to equal the key in i18n/index.
- * @param [children] React.nodes
- * @param [shallow] enable or disable shallow routing, @see https://nextjs.org/docs/routing/shallow-routing
- */
-const LanguageSwitcher = ({ lang, children, shallow = false }) => {
-    // state indicating if this component's target language matches the currently selected
-    const { isActive: languageSwitcherIsActive } = useLanguageSwitcherIsActive(lang);
-    // necessary for updating the router's query parameter inside the click handler
-    const router$1 = router.useRouter();
-    const [query] = useLanguageQuery(lang);
-    /**
-     * Updates the router with the currently selected language
-     */
-    const updateRouter = () => {
-        router$1.push({
-            pathname: router$1.pathname,
-            query: query,
-        }, undefined, { shallow: shallow });
-    };
-    // use React.cloneElement to manipulate properties
-    if (React__default["default"].isValidElement(children)) {
-        return React__default["default"].cloneElement(children, {
-            onClick: () => {
-                if (children &&
-                    children.props &&
-                    typeof children.props.onClick === 'function') {
-                    children.props.onClick();
-                }
-                // set the language
-                updateRouter();
-            },
-            "data-language-switcher": "true",
-            // set the current status
-            "data-is-current": languageSwitcherIsActive,
-            "role": "button",
-            "aria-label": `set language to ${lang}`
-        });
-    }
-    else {
-        return (React__default["default"].createElement("span", { role: "button", "aria-label": `set language to ${lang}`, "data-language-switcher": "true", "data-is-current": languageSwitcherIsActive, onClick: () => {
-                // set the language
-                updateRouter();
-            } }, children));
-    }
-};
-
-exports.LanguageSwitcher = LanguageSwitcher;
 exports["default"] = i18n;
 exports.useLanguageQuery = useLanguageQuery;
 exports.useLanguageSwitcherIsActive = useLanguageSwitcherIsActive;
